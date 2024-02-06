@@ -1,21 +1,14 @@
 # Importamos galerias 
 
 from fastapi import FastAPI
-from Routers.Funciones import router as funcion_router
+import pandas as pd
+from sklearn.metrics.pairwise        import cosine_similarity
+from sklearn.metrics.pairwise        import linear_kernel
+from sklearn.feature_extraction.text import TfidfVectorizer
 
-#import pandas as pd
-#from sklearn.metrics.pairwise        import cosine_similarity
-#from sklearn.metrics.pairwise        import linear_kernel
-#from sklearn.feature_extraction.text import TfidfVectorizer
+df = pd.read_csv('DataSet_Final.csv')
+df_games = pd.read_csv('steam_games_organizados.csv')
 
-#import numpy as np
-#from sklearn.metrics.pairwise        import cosine_similarity
-#from sklearn.metrics.pairwise        import linear_kernel
-#from sklearn.feature_extraction.text import TfidfVectorizer
-
-#df = pd.read_csv('DataSet_Final.csv')
-
-#http://127.0.0.1:8000
 
 app=FastAPI()#debug=True)
 
@@ -23,16 +16,7 @@ app=FastAPI()#debug=True)
 def message():
     return 'PROYECTO INTEGRADOR ML OPS 01 HECTOR OCAMPO GAVIRIA DATAFT-19'
 
-app.include_router(funcion_router)
 
-#@app.get("/libros/{id}")
-#def mostrar_libro(id: int):
-#    return {"data": id}
-
-
-
-
-"""
 # Funcion1 que entrega el año de lanzamiento con más horas jugadas segun el genero 
 
 @app.get('/PlayTimeGenre/{genre}')
@@ -76,14 +60,11 @@ def UsersRecommend(year: int) -> dict:
     return resultado
 
 
-"""
-"""
---> FUNCIÓN4 que entrega el top 3 de desarrolladoras con juegos MENOS recomendados por usuarios para el año dado.
-    (reviews.recommend = False y comentarios negativos)
---> Ejemplo de retorno: [{"Puesto 1" : X}, {"Puesto 2" : Y},{"Puesto 3" : Z}]
-"""
 
-"""
+#--> FUNCIÓN4 que entrega el top 3 de desarrolladoras con juegos MENOS recomendados por usuarios para el año dado.
+#    (reviews.recommend = False y comentarios negativos)
+#--> Ejemplo de retorno: [{"Puesto 1" : X}, {"Puesto 2" : Y},{"Puesto 3" : Z}]
+
 @app.get('/UsersWorstDeveloper/{year}')
 def UsersRecommend(year: int) -> dict:
     df_filtrado = df[(df['release_date'] == year) & (df['recommend'] == False) & (df['sentiment_score'] == 0 )]
@@ -98,14 +79,12 @@ def UsersRecommend(year: int) -> dict:
     }
     return resultado
 
-"""
-"""
---> FUNCIÓN5: Según la empresa desarrolladora, se devuelve un diccionario con el nombre de la desarrolladora como llave y una lista con la cantidad total 
-    de registros de reseñas de usuarios que se encuentren categorizados con un análisis de sentimiento como valor. 
 
---> Ejemplo de retorno: {'Valve' : [Negative = 182, Neutral = 120, Positive = 278]}
-"""
-"""
+
+#--> FUNCIÓN5: Según la empresa desarrolladora, se devuelve un diccionario con el nombre de la desarrolladora como llave y una lista con la cantidad total 
+#    de registros de reseñas de usuarios que se encuentren categorizados con un análisis de sentimiento como valor. 
+#--> Ejemplo de retorno: {'Valve' : [Negative = 182, Neutral = 120, Positive = 278]}
+
 @app.get('/sentiment_analysis/{developer}')
 def sentiment_analysis(developer : str) -> dict:
     filtered_df = df[df['developer'] == developer]
@@ -118,36 +97,33 @@ def sentiment_analysis(developer : str) -> dict:
     }
     return result
 
-"""
-"""
---> FUNCIÓN6: 
 
-"""
-"""
 
-muestra = df.head(6000)
+# --> FUNCIÓN6: 
+
+muestra = df_games
 tfidf = TfidfVectorizer(stop_words='english')
 muestra=muestra.fillna("")
-
-tdfid_matrix = tfidf.fit_transform(muestra['review'])
+tdfid_matrix = tfidf.fit_transform(muestra['app_name'])
 cosine_similarity = linear_kernel( tdfid_matrix, tdfid_matrix)
  
 @app.get('/recomendacion_id/{id_producto}')
 def recomendacion(id_producto: int):
-    if id_producto not in muestra['steam_id'].values:
+    if id_producto not in muestra['id'].values:
         return {'mensaje': 'No existe el id del producto.'}
-  
-    generos = muestra.columns[2:17] 
+    else:  
+         
+        filtered_df = muestra[muestra['id'] != id_producto]
     
-    filtered_df = muestra[(muestra[generos] == 1).any(axis=1) & (muestra['steam_id'] != id_producto)]
-    tdfid_matrix_filtered = tfidf.transform(filtered_df['review'])
-    cosine_similarity_filtered = linear_kernel(tdfid_matrix_filtered, tdfid_matrix_filtered)
-    idx = muestra[muestra['steam_id'] == id_producto].index[0]
-    sim_cosine = list(enumerate(cosine_similarity_filtered[idx]))
-    sim_scores = sorted(sim_cosine, key=lambda x: x[1], reverse=True)
-    sim_ind = [i for i, _ in sim_scores[1:6]]
-    sim_juegos = filtered_df['app_name'].iloc[sim_ind].values.tolist()
-    
+        tdfid_matrix_filtered = tfidf.transform(filtered_df['app_name'])
+        cosine_similarity_filtered = linear_kernel(tdfid_matrix_filtered, tdfid_matrix_filtered)
+
+
+        # Now you can proceed with your subsequent code
+        idx = muestra[muestra['id'] == id_producto].index[0]
+        sim_cosine = list(enumerate(cosine_similarity_filtered[idx]))
+        sim_scores = sorted(sim_cosine, key=lambda x: x[1], reverse=True)
+        sim_ind = [i for i, _ in sim_scores[1:6]]
+        sim_juegos = filtered_df['app_name'].iloc[sim_ind].values.tolist()
+
     return {'juegos recomendados': list(sim_juegos)}
-"""
-  
