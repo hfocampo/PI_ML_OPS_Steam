@@ -6,8 +6,8 @@ from sklearn.metrics.pairwise        import cosine_similarity
 from sklearn.metrics.pairwise        import linear_kernel
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-df = pd.read_csv(r'../dataset_finales/DataSet_Final.csv')
-df_games = pd.read_csv(r'../dataset_finales/steam_games_organizados.csv')
+df = pd.read_csv('dataset_finales/DataSet_Final.csv')
+df_games = pd.read_csv('dataset_finales/steam_games_organizados.csv')
 
 
 app=FastAPI()#debug=True)
