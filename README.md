@@ -8,7 +8,7 @@
 Steam es una plataforma multinacional de videojuegos y plantea la tarea de crear un sistema de recomendacion de videojuegos. En el proyecto desarrollo las etapas de Ingeniería de Datos con procesos como ETL y EDA y Data Analytics respondiendo endpoint o preguntas de valor para el usuario, también se hace el despliegue de la API con el marco de referencia de FastAPI. El objetivo final es que los usuarios conozcan más de  cerca de los juegos, los más recomendados, los géneros que más les puedan interesar, un análisis de sentimiento de juegos y un modelo de Machine Learnig.
 
 
-## Etapas del proyecto
+# Etapas del proyecto
 
 El sistema se construye en tres etapas:
 
@@ -16,14 +16,14 @@ El sistema se construye en tres etapas:
 
 - **ETL:** Se realizó la carga y limpieza inicial, y organización del dataset para su correcta lectura. Se implementó un análisis de sentimiento  usando la herramienta 'SentimentIntensityAnalyzercon' creando la columna 'sentiment_score', permitiendo mejorar el rendimiento de la API con FastAPI y el entrenamiento del modelo de Machine Learning.
 
-- **API usando FastAPI:** Se propuso y desarrolló una API usando FastAPI que ofrece diversas consultas a los datos disponibles, brindando información sobre géneros, xxxxxxxx desarrolladores, usuarios, géneros y juegos.
+- **API 'endpoints':** Se propuso y desarrolló una API usando FastAPI que ofrece diversas consultas a los datos disponibles, brindando información sobre géneros, desarrolladores, usuarios, géneros y juegos.
 
 
 ### 2. EDA y Modelos de Machine learning
 
-- **Analisis exploratorio:** Se realizó un análisis exploratorio de los datos como nube de nombres de juegos más comunes, frecuencia en las que estas palabras aparecen, correlación entre variables claves, y otrras importantes para comprender mejor las relaciones entre las variables del dataset. Todas estas relaciones y datos sirven para análisis posteriores.
+- **Analisis exploratorio:** Se realizó un análisis exploratorio de los datos como nube de nombres de juegos más comunes, frecuencia en las que estas palabras aparecen, correlación entre variables claves, y otras importantes para comprender mejor las relaciones entre las variables del dataset. Todas estas relaciones y datos sirven para análisis posteriores.
 
-- **Modelos de Recomendación:** xxxxx Se implementó al menos uno de dos tipos de sistemas de recomendación: ítem-ítem y usuario-ítem. Estos modelos permiten sugerir juegos similares basados en la similitud entre ítems o usuarios.
+- **Modelos de Recomendación:** Se implementó el sistemas de recomendación 'ítem-ítem'. Este modelo permite sugerir juegos similares basados en la similitud entre ítems o juegos.
 
 ### 3. Deployment y Documentación
 
@@ -34,7 +34,7 @@ El sistema se construye en tres etapas:
 - **Video explicativo:** Se desarrolla un video explicativo sobre el proyecto, el cual queda disponible en Yuotube
 
 
-## ETL --> Extract, Transform and Load
+## --> ETL
 
 <p align="center">
   <img src="images/image (3).jpg" width="400" alt="Texto alternativo si la imagen no carga">
@@ -58,24 +58,23 @@ Estos tres primeros archivos se dejaron separados para análisis posteriores, pu
 En resumen, cada archivo trabajado en el ETL quedó organizado y listo para ser usado y cargado sin inconvenientes en un Dataframe que se requiera para análisis.
 
 
-## Deployment de la API --> endpoints
+## --> API 'endpoint'
 
 <p align="center">
   <img src='images/image (1).jpg' width="400" alt="Texto alternativo si la imagen no carga">
 </p>
 
-
-### 4. Deployment de la API
+### Deployment de la API
 
 Se creó una API usando el módulo FastAPI con 5 funciones así:
 
 + PlayTimeGenre( *`genero` : str* )**:
-    Debe devolver `año` con mas horas jugadas para dicho género.
+    Devuelve `año` con mas horas jugadas para dicho género.
   
 Ejemplo de retorno: {"Año de lanzamiento con más horas jugadas para Género X" : 2013}
-
+    
 + def **UserForGenre( *`genero` : str* )**:
-    Debe devolver el usuario que acumula más horas jugadas para el género dado y una lista de la acumulación de horas jugadas por año.
+    Devuelve el usuario que acumula más horas jugadas para el género dado y una lista de la acumulación de horas jugadas por año.
 
 Ejemplo de retorno: {"Usuario con más horas jugadas para Género X" : us213ndjss09sdf,
 			     "Horas jugadas":[{Año: 2013, Horas: 203}, {Año: 2012, Horas: 100}, {Año: 2011, Horas: 23}]}
@@ -98,15 +97,6 @@ Ejemplo de retorno: {'Valve' : [Negative = 182, Neutral = 120, Positive = 278]}
 
 
 
-
-- def PlayTimeGenre( genero : str ): Debe devolver año con mas horas jugadas para dicho género. Ejemplo de input: casual , sports 
-- def UserForGenre( genero : str ): Debe devolver el usuario que acumula más horas jugadas para el género dado y una lista de la acumulación de horas jugadas por año. Ejemplo de input: action , adventure 
-- def UsersRecommend( año : int ): Devuelve el top 3 de juegos MÁS recomendados por usuarios para el año dado. (reviews.recommend = True y comentarios positivos/neutrales) Ejemplo de input: 2014 , 2009 
-- def UsersWorstDeveloper( año : int ): Devuelve el top 3 de desarrolladoras con juegos MENOS recomendados por usuarios para el año dado: 2009 , 2012
-- def sentiment_analysis( empresa desarrolladora : str ): Según la empresa desarrolladora, se devuelve un diccionario con el nombre de la desarrolladora como llave y una lista con la cantidad total de registros de reseñas de usuarios que se encuentren categorizados con un análisis de sentimiento como valor. Ejemplo de input: Valve
-
-
-
 `games_developer(desarrollador)` - Esta función toma como entrada una cadena de texto que representa el nombre de un desarrollador. Busca en un DataFrame que contiene información sobre juegos y filtra los datos para ese desarrollador. Luego, recorre las fechas de lanzamiento únicas y recopila información sobre cuántos juegos se lanzaron en cada año y cuántos de ellos eran gratuitos. Finalmente, devuelve un diccionario con dos claves: 'Cantidad de Items' y 'Contenido Free', cada una de las cuales contiene un diccionario con los años como claves y la cantidad de juegos o juegos gratuitos como valores.
 
 `userdata(User_id)` - Esta función toma como entrada una cadena de texto que representa un usuario. Primero verifica si el usuario existe en un DataFrame que contiene información sobre los usuarios y sus juegos. Luego, lee un archivo CSV en bloques y busca el usuario en cada bloque. Una vez que encuentra al usuario, calcula la cantidad de dinero que ha gastado, la cantidad de juegos que tiene y el porcentaje de juegos que ha recomendado. Finalmente, devuelve un diccionario con esta información.
@@ -116,22 +106,27 @@ Ejemplo de retorno: {'Valve' : [Negative = 182, Neutral = 120, Positive = 278]}
 `review_developer(desarrollador)` - Esta función toma como entrada una cadena de texto que representa el nombre de un desarrollador. Lee un archivo Parquet que contiene reseñas de los juegos de cada desarrollador. Filtra las reseñas para el desarrollador dado y luego devuelve un diccionario con la cantidad de reseñas positivas y negativas que ha recibido.
 
 
+## Análisis exploratorio 'EDA'
 
 
-## Funcionalidad de la API con modelo de Machine Learning
+
+## Modelos de recomendación
 
 <p align="center">
   <img src="images/image (6).jpg" width="400" alt="Texto alternativo si la imagen no carga">
-</p>
 
-- `recomend_user(usuario)` - 5 Recomendaciones para un usuario especifico, el modelo de machine learning entrenado con las bases de datos brindadas por la empresa le recomienda al usuario 5 juegos relacionados a su agrado en base a los juegos en los que dio su opinion, si el usuario no se encuentra en la base de datos o no dio valoraciones a ningun juego se le realizara una recomendacion aleatoria de juegos.
+- **sistema de recomendación** Se solicita un modelo con una relación ítem-ítem, esto es se toma un item, en base a que tan similar esa ese ítem al resto, se recomiendan similares. Aquí el input es un juego y el output es una lista de juegos recomendados, para ello se usó la  *similitud del coseno*.
+
++ def **recomendacion_juego( *`id de producto`* )**:
+    Ingresando el id de producto, deberíamos recibir una lista con 5 juegos recomendados similares al ingresado.
+
 
 <h3><center>La forma en la que se creao y se utiliza cada funcion explicado con un enfoque tecnico, se encuentra detallada en profundidad en el directorio llamado FUNCIONES.</center></h3>
 
 
 
 
-### Puesta en marcha de la api
+### Deployment y Documentación
 
 Accede a la API desplegada en [https://proyecto-steamxxx.onrender.com/].
 
@@ -143,7 +138,7 @@ Link al video : [https://youtube.com/]
 
 Nombre : Héctor Ocampo Gaviria
 
-GitHub : [https://github.com/]
+GitHub : [https://github.com/hfocampo/PI_ML_OPS_Steam]
 
 Linkedin : [https://www.linkedin.com/in/]
 
