@@ -9,7 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 app=FastAPI()#debug=True)
 
-df = pd.read_csv('dataset_finales/DataSet_final.csv')
+df = pd.read_csv('dataset_finales/Dataset_final.csv')
 df_games = pd.read_csv('dataset_finales/steam_games_organizados.csv')
 
 @app.get('/')
