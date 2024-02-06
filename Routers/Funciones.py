@@ -4,9 +4,11 @@ from sklearn.metrics.pairwise        import cosine_similarity
 from sklearn.metrics.pairwise        import linear_kernel
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+
 router = APIRouter()
 
 df = pd.read_csv('DataSet_Final.csv')
+df_games = pd.read_csv('steam_games_organizados.csv')
 
 # Funcion1 que entrega el año de lanzamiento con más horas jugadas segun el genero 
 
@@ -97,29 +99,67 @@ def sentiment_analysis(developer : str) -> dict:
 
 """
 
-
-muestra = df.head(6000)
+muestra = df_games
 tfidf = TfidfVectorizer(stop_words='english')
-
 muestra=muestra.fillna("")
-
-tdfid_matrix = tfidf.fit_transform(muestra['review'])
+tdfid_matrix = tfidf.fit_transform(muestra['app_name'])
 cosine_similarity = linear_kernel( tdfid_matrix, tdfid_matrix)
+
+
+
+
+#muestra = df.head(6000)
+#tfidf = TfidfVectorizer(stop_words='english')
+
+#muestra=muestra.fillna("")
+
+#tdfid_matrix = tfidf.fit_transform(muestra['review'])
+#cosine_similarity = linear_kernel( tdfid_matrix, tdfid_matrix)
  
 @router.get('/recomendacion_id/{id_producto}')
 def recomendacion(id_producto: int):
-    if id_producto not in muestra['steam_id'].values:
+    if id_producto not in muestra['id'].values:
         return {'mensaje': 'No existe el id del producto.'}
-  
-    generos = muestra.columns[2:17] 
+    else:  
+        #generos = muestra.columns[2:17] 
+        filtered_df = muestra[muestra['id'] != id_producto]
     
-    filtered_df = muestra[(muestra[generos] == 1).any(axis=1) & (muestra['steam_id'] != id_producto)]
-    tdfid_matrix_filtered = tfidf.transform(filtered_df['review'])
-    cosine_similarity_filtered = linear_kernel(tdfid_matrix_filtered, tdfid_matrix_filtered)
-    idx = muestra[muestra['steam_id'] == id_producto].index[0]
-    sim_cosine = list(enumerate(cosine_similarity_filtered[idx]))
-    sim_scores = sorted(sim_cosine, key=lambda x: x[1], reverse=True)
-    sim_ind = [i for i, _ in sim_scores[1:6]]
-    sim_juegos = filtered_df['app_name'].iloc[sim_ind].values.tolist()
-    
+        tdfid_matrix_filtered = tfidf.transform(filtered_df['app_name'])
+        cosine_similarity_filtered = linear_kernel(tdfid_matrix_filtered, tdfid_matrix_filtered)
+
+
+        # Now you can proceed with your subsequent code
+        idx = muestra[muestra['id'] == id_producto].index[0]
+        sim_cosine = list(enumerate(cosine_similarity_filtered[idx]))
+        sim_scores = sorted(sim_cosine, key=lambda x: x[1], reverse=True)
+        sim_ind = [i for i, _ in sim_scores[1:6]]
+        sim_juegos = filtered_df['app_name'].iloc[sim_ind].values.tolist()
+
     return {'juegos recomendados': list(sim_juegos)}
+
+"""    
+        filtered_df = muestra[(muestra[generos] == 1).any(axis=1) & (muestra['steam_id'] != id_producto)]
+        tdfid_matrix_filtered = tfidf.transform(filtered_df['review'])
+        cosine_similarity_filtered = linear_kernel(tdfid_matrix_filtered, tdfid_matrix_filtered)
+        idx = muestra[muestra['steam_id'] == id_producto].index[0]
+        sim_cosine = list(enumerate(cosine_similarity_filtered[idx]))
+        sim_scores = sorted(sim_cosine, key=lambda x: x[1], reverse=True)
+        sim_ind = [i for i, _ in sim_scores[1:6]]
+        sim_juegos = filtered_df['app_name'].iloc[sim_ind].values.tolist()
+"""    
+    
+
+"""
+#def recomendacion(id_producto: int):
+id_producto = 293960
+if id_producto not in muestra['id'].values:
+    print('mensaje: No existe el id del usuario.')
+else:  
+    ##generos = muestra.columns[2:17] 
+        
+
+    #filtered_df = muestra[(muestra[generos] == 1).any(axis=1) & (muestra['id'] != id_producto)]
+    
+    
+#return {'juegos recomendados': list(sim_juegos)}
+"""
