@@ -177,16 +177,24 @@ def sentiment_analysis(developer : str) -> dict:
 #sistema de recomendación con relación ítem-ítem, esto es se toma un item, en base a que tan similar es ese ítem
 # respecto al resto, se recomiendan similares. Aquí el input es un juego y el output es una lista de juegos
 # recomendados. Se usa *similitud del coseno*. 
+
+df = pd.read_csv('dataset_finales/steam_games_cunsulta.csv')
+muestra = df.head(4000)
+tfidf = TfidfVectorizer(stop_words='english')
+muestra=muestra.fillna("")
+tdfid_matrix = tfidf.fit_transform(muestra['app_name'])
+cosine_similarity = linear_kernel( tdfid_matrix, tdfid_matrix)
+
  
 @router.get('/recomendacion_id/{id_producto}')
 def recomendacion(id_producto: int):    
 
-    muestra = pd.read_csv('dataset_finales/steam_games_cunsulta.csv')
+    #muestra = pd.read_csv('dataset_finales/steam_games_cunsulta.csv')
     
-    tfidf = TfidfVectorizer(stop_words='english')
-    muestra=muestra.fillna("")
-    tdfid_matrix = tfidf.fit_transform(muestra['app_name'])
-    cosine_similarity = linear_kernel( tdfid_matrix, tdfid_matrix)
+    #tfidf = TfidfVectorizer(stop_words='english')
+    #muestra=muestra.fillna("")
+    #tdfid_matrix = tfidf.fit_transform(muestra['app_name'])
+    #cosine_similarity = linear_kernel( tdfid_matrix, tdfid_matrix)
 
     if id_producto not in muestra['id'].values:
         return {'mensaje': 'No existe el id del producto.'}
