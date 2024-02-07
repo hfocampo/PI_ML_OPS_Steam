@@ -15,8 +15,6 @@ router = APIRouter()
 
 # Funcion1 que entrega el año de lanzamiento con más horas jugadas segun el genero 
 
-
-# Definir la función
 @router.get('/PlayTimeGenre/{genre}')
 def PlayTimeGenre(genre: str) -> dict:
 #def year_with_most_playtime_by_genre(genre: str) -> int:
@@ -40,6 +38,78 @@ def PlayTimeGenre(genre: str) -> dict:
     return {"Género": genre, "Año de lanzamiento con más horas jugadas para Género :": int(max_playtime_year)}#max_playtime_year
     
 
+
+# Función2 que entrega el usuario que acumula más horas jugadas para el género dado y una lista de la acumulación
+# de horas jugadas por año
+
+@router.get('/UserForGenre/{genre}')
+def UserForGenre(genre: str) -> dict:
+#def user_with_most_playtime_in_genre(genre: str) -> tuple:
+    # Convertir el género a título
+    genre = genre.capitalize()
+    
+    df_games2 = pd.read_csv('dataset_finales/steam_games_cunsulta.csv')
+    df_items = pd.read_csv('dataset_finales/australian_users_items_organizados.csv')
+        
+    merged_df = pd.merge(df_games2, df_items, on='id')
+    merged_df['playtime_hours'] = merged_df['playtime_forever'] / 60
+
+    # Filtrar el DataFrame por el género especificado
+    genre_df = merged_df[merged_df[genre] == 1]
+    
+    # Agrupar por 'release_date' y calcular la acumulación de horas jugadas por año
+    year_playtime = genre_df.groupby('release_date')['playtime_hours'].sum().reset_index()
+    
+    # Encontrar al usuario con más horas jugadas en el género especificado
+    user_most_playtime = genre_df.loc[genre_df['playtime_hours'].idxmax(), 'user_id']
+    
+    # Crear la lista de horas jugadas por año
+    playtime_list = year_playtime.values.tolist()
+    
+    # Construir el resultado
+    resultado = {
+        "Usuario con más horas jugadas para Género " + genre: user_most_playtime,
+        "Horas jugadas": playtime_list
+    }
+    return resultado
+
+
+#Función3 que entrega el top 3 de juegos MÁS recomendados por usuarios para el año dado. (reviews.recommend = True y comentarios positivos/neutrales)
+
+@router.get('/UsersRecommend/{year}')
+def UsersRecommend(year: int) -> dict:
+#def top_3_most_recommended_games(year):
+
+    df_games = pd.read_csv('dataset_finales/steam_games_cunsulta.csv')
+    df_reviews = pd.read_csv('dataset_finales/user_reviews_consulta.csv')
+    
+    #df_games = pd.read_csv('steam_games_cunsulta.csv')
+    #df_reviews = pd.read_csv('user_reviews_consulta.csv')
+    
+    # Filtrar los juegos para el año dado
+    df_games_year = df_games[df_games['release_date'] == year]
+
+    # Fusionar los DataFrames en función del 'item_id'
+    merged_df = pd.merge(df_reviews, df_games_year, left_on='item_id', right_on='id')
+
+    # Filtrar para obtener las recomendaciones válidas
+    valid_recommendations = merged_df[(merged_df['recommend'] == True) & 
+                                      (merged_df['sentiment_score'] == 2)]
+
+    # Ordenar por 'sentiment_score' en orden descendente
+    sorted_df = valid_recommendations.sort_values(by='sentiment_score', ascending=False)
+
+    # Seleccionar los tres primeros juegos
+    top_3_games = sorted_df.head(3)
+
+    # Crear el resultado con los nombres de los juegos en los tres primeros puestos
+    resultado = {
+        "Puesto 1": top_3_games.iloc[0]['app_name'],
+        "Puesto 2": top_3_games.iloc[1]['app_name'],
+        "Puesto 3": top_3_games.iloc[2]['app_name']
+    }
+
+    return resultado
 
 
 """
